@@ -26,6 +26,7 @@ public class CityDAOImpl extends Util implements CityDAO {
             preparedStatement.setInt(4,city.getCountryId());
 
             preparedStatement.executeUpdate();
+            System.out.println(city.getCityName() + "was added");
         }catch (SQLException e){
             e.printStackTrace();
         }finally {
@@ -109,6 +110,7 @@ public class CityDAOImpl extends Util implements CityDAO {
             preparedStatement.setInt(4,city.getCityId());
 
             preparedStatement.executeUpdate();
+            System.out.println(city.getCityName() + "was updated");
         }catch (SQLException e){
             e.printStackTrace();
         }finally {
@@ -121,11 +123,13 @@ public class CityDAOImpl extends Util implements CityDAO {
     @Override
     public void remove(City city) throws SQLException {
         Statement statement = null;
+        Integer id = city.getCityId();
 
-        String sql = "DELETE FROM CITIES WHERE CITY_ID=1";
+        String sql = "DELETE FROM CITIES WHERE CITY_ID=" + id.toString();
         try{
             statement = connection.createStatement();
             statement.executeUpdate(sql);
+            System.out.println(city.getCityName() + "was deleted");
         }catch (SQLException e){
             e.printStackTrace();
         }finally {

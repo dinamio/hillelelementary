@@ -28,6 +28,7 @@ public class CountryDaoImpl extends Util implements CountryDao {
             preparedStatement.setInt(5,country.getPopulation());
 
             preparedStatement.executeUpdate();
+            System.out.println(country.getCountryName() + "was added");
         }catch (SQLException e){
             e.printStackTrace();
         }finally {
@@ -114,6 +115,7 @@ public class CountryDaoImpl extends Util implements CountryDao {
             preparedStatement.setInt(5,country.getCountryId());
 
             preparedStatement.executeUpdate();
+            System.out.println(country.getCountryName() + "was updated");
         }catch (SQLException e){
             e.printStackTrace();
         }finally {
@@ -126,12 +128,14 @@ public class CountryDaoImpl extends Util implements CountryDao {
     @Override
     public void remove(Country country) throws SQLException {
         Statement statement = null;
+        Integer id = country.getCountryId();
 
-        String sql = "DELETE FROM countries_of_the_world WHERE country_of_the_world_id=1";
+        String sql = "DELETE FROM countries_of_the_world WHERE country_of_the_world_id="+id.toString();
         try{
             statement = connection.createStatement();
 
             statement.executeUpdate(sql);
+            System.out.println(country.getCountryName() + "was deleted");
         }catch (SQLException e){
             e.printStackTrace();
         }finally {
