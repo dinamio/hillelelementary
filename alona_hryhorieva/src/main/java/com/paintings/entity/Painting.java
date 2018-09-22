@@ -5,6 +5,14 @@ public class Painting {
     private String name;
     private Artist artist;
 
+    public Painting() {
+    }
+
+    public Painting(String name, Artist artist) {
+        this.name = name;
+        this.artist = artist;
+    }
+
     public Integer getId() {
         return id;
     }

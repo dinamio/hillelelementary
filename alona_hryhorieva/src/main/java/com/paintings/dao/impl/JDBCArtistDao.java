@@ -72,11 +72,11 @@ public class JDBCArtistDao implements ArtistDao{
     }
 
     @Override
-    public void insert(String name) {
+    public void insert(Artist artist) {
         try {
             String insertQueryStatement = "INSERT  INTO  artists (name)  VALUES  (?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertQueryStatement);
-            preparedStatement.setString(1, name);
+            preparedStatement.setString(1, artist.getName());
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException e) {
@@ -98,11 +98,11 @@ public class JDBCArtistDao implements ArtistDao{
     }
 
     @Override
-    public void updateById(String name, Integer id) {
+    public void updateById(Artist artist, Integer id) {
         try {
             String updateQueryStatement = "UPDATE artists SET name = ? WHERE id = ?;";
             PreparedStatement preparedStatement = connection.prepareStatement(updateQueryStatement);
-            preparedStatement.setString(1, name);
+            preparedStatement.setString(1, artist.getName());
             preparedStatement.setInt(2, id);
             preparedStatement.executeUpdate();
             preparedStatement.close();

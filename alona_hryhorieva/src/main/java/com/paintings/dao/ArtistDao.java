@@ -8,7 +8,7 @@ import java.util.List;
 public interface ArtistDao {
     List<Artist> selectAll();
     List<Artist> selectByName(String name);
-    void insert(String name);
+    void insert(Artist artist);
     void deleteByName(String name);
-    void updateById(String name, Integer id);
+    void updateById(Artist artist, Integer id);
 }

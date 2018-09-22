@@ -1,8 +1,5 @@
 com\paintings\dao\PaintingDao.class
-com\paintings\dao\impl\DBConnection.class
-com\paintings\dao\impl\JDBCPaintingDao.class
-com\paintings\entity\Artist.class
 com\paintings\dao\ArtistDao.class
 com\paintings\dao\impl\JDBCArtistDao.class
 com\paintings\entity\Painting.class
-com\paintings\App.class
+com\paintings\entity\Artist.class

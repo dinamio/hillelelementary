@@ -51,17 +51,17 @@ public class JDBCPaintingDao implements PaintingDao {
     }
 
     @Override
-    public void insert(String name, Artist artist, JDBCArtistDao artistDao) {
-        List<Artist> artists = artistDao.selectByName(artist.getName());
+    public void insert(Painting painting, JDBCArtistDao artistDao) {
+        List<Artist> artists = artistDao.selectByName(painting.getArtist().getName());
         if(artists.size() == 0){
-            artistDao.insert(artist.getName());
-            artists = artistDao.selectByName(artist.getName());
+            artistDao.insert(painting.getArtist());
+            artists = artistDao.selectByName(painting.getArtist().getName());
         }
         try {
             String insertQueryStatement = "INSERT  INTO  paintings (name, artist)  VALUES  (?,?)";
             PreparedStatement preparedStatement = null;
             preparedStatement = connection.prepareStatement(insertQueryStatement);
-            preparedStatement.setString(1, name);
+            preparedStatement.setString(1, painting.getName());
             preparedStatement.setInt(2, artists.get(0).getId());
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -85,16 +85,16 @@ public class JDBCPaintingDao implements PaintingDao {
     }
 
     @Override
-    public void updateById(Integer id, String name, Artist artist, JDBCArtistDao artistDao) {
-        List<Artist> artists = artistDao.selectByName(artist.getName());
+    public void updateById(Integer id, Painting painting, JDBCArtistDao artistDao) {
+        List<Artist> artists = artistDao.selectByName(painting.getArtist().getName());
         if(artists.size() == 0){
-            artistDao.insert(artist.getName());
-            artists = artistDao.selectByName(artist.getName());
+            artistDao.insert(painting.getArtist());
+            artists = artistDao.selectByName(painting.getArtist().getName());
         }
         try {
             String updateQueryStatement = "UPDATE paintings SET name = ?, artist = ? WHERE id = ?;";
             PreparedStatement preparedStatement = connection.prepareStatement(updateQueryStatement);
-            preparedStatement.setString(1, name);
+            preparedStatement.setString(1, painting.getName());
             preparedStatement.setInt( 2, artists.get(0).getId());
             preparedStatement.setInt(3, id);
             preparedStatement.executeUpdate();
