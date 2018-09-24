@@ -19,18 +19,11 @@ public class MysqlCarDAO implements ICarDAO {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(BASEURL, user, password);
+            createTablesIfDoesNotExist();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Can't find driver class");
         } catch (SQLException e) {
-            try {
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306", user, password);
-                connection.createStatement().execute("CREATE DATABASE cars;");
-                connection.createStatement().execute("use cars;");
-                connection.createStatement().execute("CREATE TABLE carType(id int PRIMARY KEY AUTO_INCREMENT,name varchar(20));");
-                connection.createStatement().execute("CREATE TABLE car ( id int PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), type int, color int);");
-            } catch (SQLException sqle) {
-                System.out.println("Real trouble with connection : \n" + e.toString());
-            }
+            System.out.println("Trouble with connection: " + e);
         }
 
     }
@@ -54,10 +47,10 @@ public class MysqlCarDAO implements ICarDAO {
         car.setType(getTypeById(car.getType().getId()));
         if (car.getType() != null) { // validation for one to many
             try {
-                PreparedStatement ps = connection.prepareStatement("INSERT INTO car (name, type, color) VALUES (?,?,?)");
+                PreparedStatement ps = connection.prepareStatement("INSERT INTO car (name, type_id, color) VALUES (?,?,?)");
                 ps.setString(1, car.getName());
                 ps.setInt(2, (int) car.getType().getId());
-                ps.setInt(3, car.getColor().ordinal());
+                ps.setString(3, car.getColor().getColor());
                 ps.execute();
                 System.out.println(car.getName() + " added to car as " + car.getType().getName());
             } catch (SQLException e) {
@@ -100,7 +93,7 @@ public class MysqlCarDAO implements ICarDAO {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                car = convertRSCar(rs);
+                car = convertResultSetToCar(rs);
             }
         } catch (SQLException e) {
             System.out.println("Something wrong with car finds");
@@ -115,7 +108,7 @@ public class MysqlCarDAO implements ICarDAO {
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                car = convertRSCar(rs);
+                car = convertResultSetToCar(rs);
             }
         } catch (SQLException e) {
             System.out.println("Something wrong with car finds by name");
@@ -130,7 +123,7 @@ public class MysqlCarDAO implements ICarDAO {
         try {
             ResultSet rs = connection.createStatement().executeQuery("SELECT * from car");
             while (rs.next()) {
-                cars.add(convertRSCar(rs));
+                cars.add(convertResultSetToCar(rs));
             }
         } catch (SQLException e) {
             System.out.println("=(");
@@ -141,10 +134,10 @@ public class MysqlCarDAO implements ICarDAO {
 
     public void changeCar(Car car) {
         try {
-            PreparedStatement ps = connection.prepareStatement("update car c set c.name = ?,c.type = ?, c.color = ? where c.id =?");
+            PreparedStatement ps = connection.prepareStatement("update car c set c.name = ?,c.type_id = ?, c.color = ? where c.id =?");
             ps.setString(1, car.getName());
             ps.setInt(2, (int) car.getType().getId());
-            ps.setInt(3, car.getColor().ordinal());
+            ps.setString(3, car.getColor().getColor());
             ps.setInt(4, (int) car.getId());
 
             ps.execute();
@@ -168,14 +161,27 @@ public class MysqlCarDAO implements ICarDAO {
         }
     }
 
-    private Car convertRSCar(ResultSet rs) throws SQLException {
+    private Car convertResultSetToCar(ResultSet rs) throws SQLException {
         Car car = new Car();
 
         car.setId(rs.getInt("id"));
         car.setName(rs.getString("name"));
-        car.setType(getTypeById(rs.getInt("type")));
-        car.setColor(CarColor.values()[rs.getInt("color")]);
+        car.setType(getTypeById(rs.getInt("type_id")));
+        car.setColor(CarColor.DEFAULT.getByColor(rs.getString("color")));
 
         return car;
+    }
+
+    private void createTablesIfDoesNotExist() {
+        try {
+            ResultSet resultSet = connection.createStatement().executeQuery("SHOW TABLES LIKE 'car'");
+            if (!resultSet.next()) {
+                connection.createStatement().execute("CREATE TABLE carType(id int PRIMARY KEY AUTO_INCREMENT,name varchar(20));");
+                connection.createStatement().execute("CREATE TABLE car ( id int PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), type_id int, color VARCHAR (20));");
+                connection.createStatement().execute("ALTER TABLE car ADD CONSTRAINT type_id FOREIGN KEY (type_id) REFERENCES carType (id);");
+            }
+        } catch (SQLException e) {
+            System.out.println("trouble from create tables");
+        }
     }
 }
