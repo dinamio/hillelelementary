@@ -13,6 +13,12 @@ public class Painting {
         this.artist = artist;
     }
 
+    public Painting(Integer id, String name, Artist artist) {
+        this.id = id;
+        this.name = name;
+        this.artist = artist;
+    }
+
     public Integer getId() {
         return id;
     }

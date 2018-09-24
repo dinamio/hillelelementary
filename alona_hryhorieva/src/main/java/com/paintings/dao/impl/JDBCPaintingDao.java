@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JDBCPaintingDao implements PaintingDao {
+    JDBCArtistDao artistDao = new JDBCArtistDao();
     Connection connection;
 
     public JDBCPaintingDao() {
@@ -51,7 +52,7 @@ public class JDBCPaintingDao implements PaintingDao {
     }
 
     @Override
-    public void insert(Painting painting, JDBCArtistDao artistDao) {
+    public void insert(Painting painting) {
         List<Artist> artists = artistDao.selectByName(painting.getArtist().getName());
         if(artists.size() == 0){
             artistDao.insert(painting.getArtist());
@@ -85,7 +86,7 @@ public class JDBCPaintingDao implements PaintingDao {
     }
 
     @Override
-    public void updateById(Integer id, Painting painting, JDBCArtistDao artistDao) {
+    public void updateById(Painting painting) {
         List<Artist> artists = artistDao.selectByName(painting.getArtist().getName());
         if(artists.size() == 0){
             artistDao.insert(painting.getArtist());
@@ -96,7 +97,7 @@ public class JDBCPaintingDao implements PaintingDao {
             PreparedStatement preparedStatement = connection.prepareStatement(updateQueryStatement);
             preparedStatement.setString(1, painting.getName());
             preparedStatement.setInt( 2, artists.get(0).getId());
-            preparedStatement.setInt(3, id);
+            preparedStatement.setInt(3, painting.getId());
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException e) {

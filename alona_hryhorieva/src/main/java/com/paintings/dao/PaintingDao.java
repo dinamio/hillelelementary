@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PaintingDao {
     List<Painting> selectAll();
-    void insert(Painting painting, JDBCArtistDao artistDao);
+    void insert(Painting painting);
     void deleteByName(String name);
-    void updateById(Integer id, Painting painting, JDBCArtistDao artistDao);
+    void updateById(Painting painting);
 }
