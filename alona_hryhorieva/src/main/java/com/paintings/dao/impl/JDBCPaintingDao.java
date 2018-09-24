@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JDBCPaintingDao implements PaintingDao {
-    JDBCArtistDao artistDao = new JDBCArtistDao();
+    JDBCArtistDao artistDao;
     Connection connection;
 
     public JDBCPaintingDao() {
@@ -17,6 +17,7 @@ public class JDBCPaintingDao implements PaintingDao {
 
     public JDBCPaintingDao(Connection connection) {
         this.connection = connection;
+        this.artistDao = new JDBCArtistDao(connection);
         createTable();
     }
 

@@ -46,6 +46,5 @@ public class App {
         System.out.println("====Set after update/delete====");
         System.out.println(paintingDao.selectAll());
         System.out.println("=========================================================\n");
-
     }
 }
